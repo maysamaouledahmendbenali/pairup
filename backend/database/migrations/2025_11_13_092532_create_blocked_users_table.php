@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+  public function up()
+{
+    Schema::create('blocked_users', function (Blueprint $table) {
+        $table->id(); // Use bigint instead of uuid
+        
+        // Use foreignId instead of foreignUuid
+        $table->foreignId('blocker_id')->constrained('users')->onDelete('cascade');
+        $table->foreignId('blocked_id')->constrained('users')->onDelete('cascade');
+        
+        $table->text('reason')->nullable();
+        $table->timestamp('blocked_at')->useCurrent();
+        
+        $table->unique(['blocker_id', 'blocked_id']);
+        $table->index('blocker_id');
+    });
+}
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('blocked_users');
+    }
+};
